@@ -17,16 +17,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SearchController {
 
-  @RequestMapping(value = "/search/user", method = RequestMethod.GET)
-  public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
-    java.lang.Object message = new Object();
+@RequestMapping(value = "/search/user", method = RequestMethod.GET)
+public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
+    String message = "";
     try {
-      ExpressionParser parser = new SpelExpressionParser();
-      Expression exp = parser.parseExpression(foo);
-      message = (Object) exp.getValue();
+        // Use method parameters or context properties instead of directly evaluating user input
+        message = getSafeMessage(foo);
     } catch (Exception ex) {
-      System.out.println(ex.getMessage());
+        // Log the exception message instead of printing it to the console
+        logger.error(ex.getMessage());
     }
+    return message;
+}
+
+private String getSafeMessage(String safeInput) {
+    // Implement logic to return a safe message based on the safeInput
+    // This could involve checking the input against a whitelist of allowed values
+    // and returning a default message if the input is not valid
+    return safeInput; // Placeholder implementation
+}
+
     return message.toString();
   }
 }
