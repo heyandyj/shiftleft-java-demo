@@ -28,17 +28,20 @@ public class AdminController {
   private String fail = "redirect:/";
 
   // helper
-  private boolean isAdmin(String auth)
-  {
+private boolean isAdmin(String auth) {
     try {
-      ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(auth));
-      ObjectInputStream objectInputStream = new ObjectInputStream(bis);
-      Object authToken = objectInputStream.readObject();
-      return ((AuthToken) authToken).isAdmin();
+        ObjectMapper mapper = new ObjectMapper(); // Create ObjectMapper instance
+        byte[] bytes = Base64.getDecoder().decode(auth);
+        AuthToken authToken = mapper.readValue(bytes, AuthToken.class); // Use ObjectMapper to deserialize
+        
+        return authToken.isAdmin();
     } catch (Exception ex) {
-      System.out.println(" cookie cannot be deserialized: "+ex.getMessage());
-      return false;
+        String sanitizedMessage = Strings.abbreviateMiddle(ex.getMessage(), "...", 50); // Sanitize log message
+        System.out.println("Cookie cannot be deserialized: " + sanitizedMessage);
+        return false;
     }
+}
+
   }
 
   //
